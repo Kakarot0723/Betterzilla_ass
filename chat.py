@@ -1,26 +1,22 @@
-
 import gradio as gr
 import logging
 import faiss       
-import PyPDF2
-import pdfreader
+#import PyPDF2
+#import pdfreader
 import openai
 from InstructorEmbedding import INSTRUCTOR
-from langchain.document_loaders import DirectoryLoader, TextLoader
+#from langchain.document_loaders import DirectoryLoader, TextLoader
 logging.getLogger().setLevel(logging.CRITICAL)
 
 num_words = 150
 k = 7
 
 messages = [
- {"role": "system", "content" : "You are an AI agent that summarizes chat in less than three setences."}
+ {"role": "system", "content" : "You are an AI agent that summarizes chat in less than 2 sentences."}
 ]
 
-chats = [{"role": "system", "content" : "You are an AI assistant providing helpful advice. \n" + \
-          "You are given the following extracted parts of a long document and a question. \n" + \
-          "Provide a conversational answer based on the context provided. \n" + \
+chats = [{"role": "system", "content" : "You are given the following extracted parts of a book called 48 hours of power and a question. \n" + \
           "Give answer less than 500 words. \n" + \
-          "Give answer in 4 sentences or less. \n" + \
           "SUMMARISE THE ANSWER IN 2 SENTENCES OR LESS. \n" + \
           "If you can't find the answer in the context below, use your prior knowledge,  \n" + \
           "but in most of the cases the answer will be in the context.' \n" + \
@@ -34,16 +30,6 @@ instruction = "Represent the query for retrieval:"
 global index
 sentences = None
 index = faiss.IndexFlatL2(768)
-
-def extract_text(pdf_file):
-    
-    with open (pdf_file.name, "rb") as f:
-        pdf_reader = pdfreader.PdfFileReader(f)
-        text = ""
-        for page in range(pdf_reader.getNumPages()):
-            page_obj = pdf_reader.getPage(page)
-            text += page_obj.extractText()
-        return text
     
 def build_the_bot(openai_key):
 
@@ -98,7 +84,7 @@ def chat(chat_history, user_input):
         except:
             print(len(sentences), i)
 
-    chats.append({"role": "user", "content": "extra information = " + extra_info[:1000] + " \n question " + summarize[:500]})
+    chats.append({"role": "user", "content": "extra information = " + extra_info[:500] + " \n question " + summarize[:500]})
 
     print("chats:", chats)
     completion = openai.ChatCompletion.create(
@@ -122,7 +108,7 @@ with gr.Blocks() as demo:
         #text_output = gr.Textbox(label="PDF content")
         text_button = gr.Button("Build the Bot!!!")
         text_button.click(build_the_bot, [openai_key])'''
-    build_the_bot('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')
+    build_the_bot('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')
     with gr.Tab("Knowledge Bot"):
           chatbot = gr.Chatbot()
           message = gr.Textbox ("What is this document about?")

@@ -3,6 +3,7 @@ import logging
 import faiss       
 #import PyPDF2
 #import pdfreader
+import constants
 import openai
 from InstructorEmbedding import INSTRUCTOR
 #from langchain.document_loaders import DirectoryLoader, TextLoader
@@ -108,7 +109,7 @@ with gr.Blocks() as demo:
         #text_output = gr.Textbox(label="PDF content")
         text_button = gr.Button("Build the Bot!!!")
         text_button.click(build_the_bot, [openai_key])'''
-    build_the_bot('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')
+    build_the_bot(constants.APIKEY)
     with gr.Tab("Knowledge Bot"):
           chatbot = gr.Chatbot()
           message = gr.Textbox ("What is this document about?")
